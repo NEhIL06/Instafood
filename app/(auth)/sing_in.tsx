@@ -1,11 +1,59 @@
-import { View, Text ,Button} from 'react-native'
-import React from 'react'
-import { router } from 'expo-router';
-export default function sing_in() {
+import { View, Text, Alert } from 'react-native'
+import React, {useState} from 'react';
+import { Link, router } from 'expo-router';
+import CustomInput from '@/components/customInput';
+import CustomButton from '@/components/customButton';
+
+export default function Sing_in() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [form,setForm] = useState({
+    email:'',
+    password:'',});
+  const submit = async () => {
+    if(!form.email || !form.password) return Alert.alert('Please fill all fields');
+    setIsSubmitting(true);
+    try {
+      Alert.alert('Successfully Submitted');
+      router.replace('/'); 
+    } catch (error:any) {
+      Alert.alert('Error',error.message);
+    }finally{
+      setIsSubmitting(false);
+    }
+  }
   return (
-    <View>
-      <Text>sing_in</Text>
-      <Button title="Sign Up" onPress={()=>router.push('/sing_up')}/>
+    <View className='gap-10 bg-white rounded-lg p-5 mt-5'>
+      <CustomInput
+          placeholder='Enter your Email'
+          value={form.email}
+          onChangeText={(text)=>{setForm({...form,email:text})}} 
+          label="Email"
+          keyboardType="email-address"
+        />
+        <CustomButton/>
+
+        <CustomInput
+          placeholder='Enter your password'
+          value={form.password}
+          onChangeText={(text)=>{setForm({...form,password:text})}} 
+          label="password"
+          secureTextEntry={true}
+
+        />
+        <CustomButton
+          title='Sign In' 
+          isLoading={isSubmitting}
+          onPress={submit}
+        />
+
+        <View className='flex justify-center mt-5 flex-row gap-2'>
+          <Text className='base-regular text-grey-100'>
+            Don`&apos;`t have an account? Sign Up
+          </Text>
+          <Link href="/sing_up">
+            SingUp
+          </Link>
+        </View>
     </View>
   )
 }
