@@ -11,7 +11,7 @@ const CartButton =  () => {
             <View className='cart-badge'>
                 <Text className='small-bold text-white'>{totalitems}</Text>
             </View>
-        )}
+        )} 
     </TouchableOpacity>
   )
 }
