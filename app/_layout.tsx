@@ -1,29 +1,31 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
+import {View, Text} from 'react-native';
+import {useFonts} from 'expo-font';
+import { use, useEffect } from 'react';
+import "../global.css";
+import { error } from 'console';
+import { SplashScreen } from 'expo-router';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [fontsLoaded,error] = useFonts({
+    "Quicksand-Bold": require('../assets/fonts/Quicksand-Bold.ttf'),
+    "Quicksand-Light": require('../assets/fonts/Quicksand-Light.ttf'),
+    "Quicksand-Medium": require('../assets/fonts/Quicksand-Medium.ttf'),
+    "Quicksand-Regular": require('../assets/fonts/Quicksand-Regular.ttf'),
+    "Quicksand-SemiBold": require('../assets/fonts/Quicksand-SemiBold.ttf'),
   });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  useEffect(() => {
+    if(error) throw error;
+    if(fontsLoaded) SplashScreen.hide();
+  }, [fontsLoaded,error]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <View className="flex-1 items-center justify-center bg-white">
+      <Text className="text-xl font-bold text-blue-500">
+        Welcome to Nativewind!
+      </Text>
+    </View>
+
   );
 }
