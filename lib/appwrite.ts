@@ -1,14 +1,19 @@
 
-import { CreateUserParams, SignInParams } from "@/type";
-import { Account, Avatars, Client, Databases, ID, Query  } from "react-native-appwrite";
-
+import { Category, CreateUserParams, GetMenuParams, SignInParams } from "@/type";
+import { Account, Avatars, Client, Databases, ID, Query, Storage  } from "react-native-appwrite";
+import * as Sentry from '@sentry/react-native';
 
 export const appwrite_config = {
     project_id : process.env.APPWRITE_PROJECT_ID!,
     platform: "com.nehil.krishibazar",
-    public_endpoint : process.env.APPWRITE_PUBLIC_ENDPOINT!,
-    database_id : process.env.APPWRITE_DATABASE_ID!,
-    user_collection_id : process.env.APPWRITE_USER_COLLECTION_ID! ,
+    public_endpoint : process.env.APPWRITE_PUBLIC_ENDPOINT! as string,
+    database_id : "68849ccf000725f375e5",
+    user_collection_id : process.env.APPWRITE_USER_COLLECTION_ID! as string,
+    categories_id: "688d10c200260b49b71c" as string,
+    menu_id: "688d117d0033b3a7f0d7" as string ,
+    customization_id: "688d12e7000d68808bbd",
+    menuCustomization_id: "688d13ab002894766135",
+    bucket_id: "68849cef001df89be612",
 }
 
 
@@ -21,6 +26,7 @@ client
 
 export const account = new Account(client);
 export const database = new Databases (client);
+export const storage = new Storage(client);
 const avatar = new Avatars(client);
   
 
@@ -60,6 +66,7 @@ export const signin = async ({email,password}:SignInParams) => {
 export const getCurrectuser = async () => {
     try {
         const current_user = await account.get();
+        //console.log("🔥 current_user", current_user);
         if(!current_user) throw new Error("User not found");
         const Documents = await database.listDocuments(
             "68849ccf000725f375e5",
@@ -72,3 +79,39 @@ export const getCurrectuser = async () => {
         throw new Error(error);
     }        
 }   
+
+export const getMenu = async({category,query}:GetMenuParams)=> {
+    try {
+        const queries:string[] = [];
+        if(category) queries.push(Query.equal('categories', category));
+        if(query) queries.push(Query.search('name', query));
+        const menu = await database.listDocuments(
+            appwrite_config.database_id,
+            appwrite_config.menu_id,
+            queries
+        ); 
+        if(!menu) throw new Error("Menu not found");
+        return menu.documents;
+
+    } catch (error:any) {
+        console.log("getMenu error", error);    
+        Sentry.captureException(error);
+        throw new Error(error);
+    }
+}
+
+
+export const getCategories = async () => {
+    try {
+        const categories = await database.listDocuments(
+            appwrite_config.database_id,
+            appwrite_config.categories_id
+        );
+        if(!categories) throw new Error("Categories not found");
+        return categories.documents as unknown as Category[];
+    } catch (error:any) {
+        Sentry.captureException(error);
+        console.log("getCategories error", error);
+        throw new Error(error);
+    }
+}
