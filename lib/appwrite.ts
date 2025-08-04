@@ -7,7 +7,7 @@ export const appwrite_config = {
     project_id : process.env.APPWRITE_PROJECT_ID!,
     platform: "com.nehil.krishibazar",
     public_endpoint : process.env.APPWRITE_PUBLIC_ENDPOINT! as string,
-    database_id : "68849ccf000725f375e5",
+    database_id : "",
     user_collection_id : process.env.APPWRITE_USER_COLLECTION_ID! as string,
     categories_id: "688d10c200260b49b71c" as string,
     menu_id: "688d117d0033b3a7f0d7" as string ,
@@ -21,8 +21,8 @@ export const client = new Client();
 
 client
 .setEndpoint("https://fra.cloud.appwrite.io/v1")
-.setProject("687defff0035523d7f27")
-.setPlatform("com.nehil.krishibazar");
+.setProject("")
+.setPlatform("");
 
 export const account = new Account(client);
 export const database = new Databases (client);
